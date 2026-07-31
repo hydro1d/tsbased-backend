@@ -54,6 +54,7 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
           _id: user._id,
           name: user.name,
           email: user.email,
+          role: user.role,
           token: generateToken(user._id.toString(), user.email),
         },
       });
@@ -101,6 +102,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        role: user.role,
         token: generateToken(user._id.toString(), user.email),
       },
     });

@@ -169,28 +169,44 @@ const mockItems = [
 
 export const seedDatabase = async (): Promise<void> => {
   try {
-    // Check if demo user exists
-    let demoUser = await User.findOne({ email: 'demo@zenith.com' });
-    
-    if (!demoUser) {
+    // Clean up old demo user if exists
+    await User.deleteOne({ email: 'demo@zenith.com' });
+
+    // Check if regular user exists
+    let regularUser = await User.findOne({ email: 'user@zenith.com' });
+    if (!regularUser) {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash('password123', salt);
-      
-      demoUser = await User.create({
+      regularUser = await User.create({
         name: 'Demo User',
-        email: 'demo@zenith.com',
+        email: 'user@zenith.com',
         password: hashedPassword,
+        role: 'user',
       });
-      console.log('Demo user seeded successfully (demo@zenith.com / password123)');
+      console.log('Regular user seeded successfully (user@zenith.com / password123)');
+    }
+
+    // Check if admin user exists
+    let adminUser = await User.findOne({ email: 'admin@zenith.com' });
+    if (!adminUser) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash('password123', salt);
+      adminUser = await User.create({
+        name: 'Admin User',
+        email: 'admin@zenith.com',
+        password: hashedPassword,
+        role: 'admin',
+      });
+      console.log('Admin user seeded successfully (admin@zenith.com / password123)');
     }
 
     // Check if items already exist
     const itemCount = await Item.countDocuments();
     if (itemCount === 0) {
-      // Map items to include owner ID
+      // Map items to include owner ID (assign to regularUser)
       const itemsToSeed = mockItems.map(item => ({
         ...item,
-        owner: demoUser!._id,
+        owner: regularUser!._id,
       }));
 
       await Item.insertMany(itemsToSeed);

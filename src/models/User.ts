@@ -24,6 +24,11 @@ const userSchema = new Schema<IUser>(
       required: [true, 'Please provide a password'],
       minlength: [6, 'Password must be at least 6 characters'],
     },
+    role: {
+      type: String,
+      enum: ['user', 'admin'],
+      default: 'user',
+    },
   },
   {
     timestamps: true,
