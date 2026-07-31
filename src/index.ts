@@ -19,8 +19,14 @@ connectDB().then(() => {
 });
 
 // Middleware
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  process.env.FRONTEND_URL
+].filter(Boolean) as string[];
+
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'], // standard React dev server ports
+  origin: allowedOrigins,
   credentials: true,
 }));
 app.use(express.json());
